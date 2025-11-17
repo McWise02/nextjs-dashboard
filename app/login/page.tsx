@@ -1,34 +1,20 @@
-export async function updateInvoice(
-  id: string,
-  prevState: State,
-  formData: FormData,
-) {
-  const validatedFields = UpdateInvoice.safeParse({
-    customerId: formData.get('customerId'),
-    amount: formData.get('amount'),
-    status: formData.get('status'),
-  });
+import AcmeLogo from '@/app/ui/acme-logo';
+import LoginForm from '@/app/ui/login-form';
+import { Suspense } from 'react';
  
-  if (!validatedFields.success) {
-    return {
-      errors: validatedFields.error.flatten().fieldErrors,
-      message: 'Missing Fields. Failed to Update Invoice.',
-    };
-  }
- 
-  const { customerId, amount, status } = validatedFields.data;
-  const amountInCents = amount * 100;
- 
-  try {
-    await sql`
-      UPDATE invoices
-      SET customer_id = ${customerId}, amount = ${amountInCents}, status = ${status}
-      WHERE id = ${id}
-    `;
-  } catch (error) {
-    return { message: 'Database Error: Failed to Update Invoice.' };
-  }
- 
-  revalidatePath('/dashboard/invoices');
-  redirect('/dashboard/invoices');
+export default function LoginPage() {
+  return (
+    <main className="flex items-center justify-center md:h-screen">
+      <div className="relative mx-auto flex w-full max-w-[400px] flex-col space-y-2.5 p-4 md:-mt-32">
+        <div className="flex h-20 w-full items-end rounded-lg bg-blue-500 p-3 md:h-36">
+          <div className="w-32 text-white md:w-36">
+            <AcmeLogo />
+          </div>
+        </div>
+        <Suspense>
+          <LoginForm />
+        </Suspense>
+      </div>
+    </main>
+  );
 }
